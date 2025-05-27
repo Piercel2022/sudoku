@@ -1,316 +1,371 @@
-// ==================== ÉTAPE 1: Classe principale Sudoku ====================
-// Cette classe contient la grille et toute la logique du jeu
+// ============================================================================
+// Sudoku.java - Core Sudoku engine (src/main/java/com/sudoku/core/Sudoku.java)
+// ============================================================================
+package com.sudoku.core;
 
-import java.util.*;
-
-package com.sudoku;
+import java.util.Random;
+import java.util.Arrays;
 
 public class Sudoku {
-    // Constante pour la taille de la grille (9x9)
-    private static final int GRID_SIZE = 9;
-    // Constante pour la taille des sous-grilles (3x3)
-    private static final int SUB_GRID_SIZE = 3;
+    private int[][] grille;
+    private int[][] originalGrid;
+    private Random random;
     
-    // La grille de jeu - tableau 2D d'entiers
-    // 0 représente une case vide, 1-9 représentent les chiffres placés
-    private int[][] grid;
-    
-    // Constructeur - initialise une grille vide
     public Sudoku() {
-        this.grid = new int[GRID_SIZE][GRID_SIZE];
-    }
-    
-    // ==================== ÉTAPE 2: Méthodes de validation ====================
-    
-    /**
-     * Vérifie si un nombre peut être placé à une position donnée
-     * @param row ligne (0-8)
-     * @param col colonne (0-8)
-     * @param number nombre à placer (1-9)
-     * @return true si le placement est valide, false sinon
-     */
-    public boolean isValidPlacement(int row, int col, int number) {
-        // Vérification des trois règles du Sudoku
-        return !isNumberInRow(row, number) && 
-               !isNumberInColumn(col, number) && 
-               !isNumberInSubGrid(row, col, number);
-    }
-    
-    /**
-     * Vérifie si un nombre existe déjà dans une ligne
-     */
-    private boolean isNumberInRow(int row, int number) {
-        for (int col = 0; col < GRID_SIZE; col++) {
-            if (grid[row][col] == number) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    /**
-     * Vérifie si un nombre existe déjà dans une colonne
-     */
-    private boolean isNumberInColumn(int col, int number) {
-        for (int row = 0; row < GRID_SIZE; row++) {
-            if (grid[row][col] == number) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    /**
-     * Vérifie si un nombre existe déjà dans la sous-grille 3x3
-     */
-    private boolean isNumberInSubGrid(int row, int col, int number) {
-        // Calcul des coordonnées du coin supérieur gauche de la sous-grille
-        int subGridRowStart = row - row % SUB_GRID_SIZE;
-        int subGridColStart = col - col % SUB_GRID_SIZE;
-        
-        // Parcours de la sous-grille 3x3
-        for (int r = subGridRowStart; r < subGridRowStart + SUB_GRID_SIZE; r++) {
-            for (int c = subGridColStart; c < subGridColStart + SUB_GRID_SIZE; c++) {
-                if (grid[r][c] == number) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    
-    // ==================== ÉTAPE 3: Algorithme de résolution (Backtracking) ====================
-    
-    /**
-     * Résout le Sudoku en utilisant l'algorithme de backtracking
-     * @return true si une solution existe, false sinon
-     */
-    public boolean solveSudoku() {
-        // Parcours de toute la grille
-        for (int row = 0; row < GRID_SIZE; row++) {
-            for (int col = 0; col < GRID_SIZE; col++) {
-                // Si on trouve une case vide (0)
-                if (grid[row][col] == 0) {
-                    // Essayer tous les nombres de 1 à 9
-                    for (int numberToTry = 1; numberToTry <= GRID_SIZE; numberToTry++) {
-                        // Si le nombre peut être placé à cette position
-                        if (isValidPlacement(row, col, numberToTry)) {
-                            // Placer le nombre
-                            grid[row][col] = numberToTry;
-                            
-                            // Récursion: essayer de résoudre le reste
-                            if (solveSudoku()) {
-                                return true; // Solution trouvée
-                            } else {
-                                // Backtrack: annuler le placement si ça ne mène pas à une solution
-                                grid[row][col] = 0;
-                            }
-                        }
-                    }
-                    // Si aucun nombre ne fonctionne, pas de solution
-                    return false;
-                }
-            }
-        }
-        // Toutes les cases sont remplies - solution trouvée
-        return true;
-    }
-    
-    // ==================== ÉTAPE 4: Génération de grilles ====================
-    
-    /**
-     * Génère une grille de Sudoku complètement remplie
-     */
-    public void generateCompleteSudoku() {
-        // Vider la grille
+        this.grille = new int[9][9];
+        this.originalGrid = new int[9][9];
+        this.random = new Random();
         clearGrid();
-        
-        // Remplir la diagonale principale (3 sous-grilles qui ne s'influencent pas)
-        fillDiagonal();
-        
-        // Résoudre le reste de la grille
-        solveSudoku();
     }
     
     /**
-     * Remplit les 3 sous-grilles de la diagonale principale
-     */
-    private void fillDiagonal() {
-        for (int i = 0; i < GRID_SIZE; i += SUB_GRID_SIZE) {
-            fillSubGrid(i, i);
-        }
-    }
-    
-    /**
-     * Remplit une sous-grille 3x3 avec des nombres aléatoires
-     */
-    private void fillSubGrid(int row, int col) {
-        Random random = new Random();
-        List<Integer> numbers = new ArrayList<>();
-        
-        // Créer une liste des nombres 1-9
-        for (int i = 1; i <= 9; i++) {
-            numbers.add(i);
-        }
-        
-        // Mélanger la liste
-        Collections.shuffle(numbers);
-        
-        // Remplir la sous-grille
-        int index = 0;
-        for (int r = 0; r < SUB_GRID_SIZE; r++) {
-            for (int c = 0; c < SUB_GRID_SIZE; c++) {
-                grid[row + r][col + c] = numbers.get(index++);
-            }
-        }
-    }
-    
-    /**
-     * Crée un puzzle en retirant des nombres d'une grille complète
-     * @param difficulty nombre de cases à vider (plus élevé = plus difficile)
-     */
-    public void createPuzzle(int difficulty) {
-        generateCompleteSudoku();
-        
-        Random random = new Random();
-        int cellsToRemove = Math.min(difficulty, 64); // Maximum 64 cases vides
-        
-        while (cellsToRemove > 0) {
-            int row = random.nextInt(GRID_SIZE);
-            int col = random.nextInt(GRID_SIZE);
-            
-            // Si la case n'est pas déjà vide
-            if (grid[row][col] != 0) {
-                grid[row][col] = 0;
-                cellsToRemove--;
-            }
-        }
-    }
-    
-    // ==================== ÉTAPE 5: Méthodes utilitaires ====================
-    
-    /**
-     * Vide complètement la grille
+     * Initialise la grille avec des zéros
      */
     public void clearGrid() {
-        for (int row = 0; row < GRID_SIZE; row++) {
-            for (int col = 0; col < GRID_SIZE; col++) {
-                grid[row][col] = 0;
-            }
+        for (int i = 0; i < 9; i++) {
+            Arrays.fill(grille[i], 0);
+            Arrays.fill(originalGrid[i], 0);
         }
     }
     
     /**
-     * Place un nombre à une position spécifique
+     * Retourne une copie de la grille
      */
-    public boolean setNumber(int row, int col, int number) {
-        if (row < 0 || row >= GRID_SIZE || col < 0 || col >= GRID_SIZE) {
-            return false; // Position invalide
+    public int[][] getGrille() {
+        int[][] copy = new int[9][9];
+        for (int i = 0; i < 9; i++) {
+            System.arraycopy(grille[i], 0, copy[i], 0, 9);
         }
-        
-        if (number < 0 || number > 9) {
-            return false; // Nombre invalide
-        }
-        
-        if (number == 0 || isValidPlacement(row, col, number)) {
-            grid[row][col] = number;
-            return true;
-        }
-        
-        return false; // Placement invalide
-    }
-    
-    /**
-     * Obtient la valeur à une position donnée
-     */
-    public int getNumber(int row, int col) {
-        if (row < 0 || row >= GRID_SIZE || col < 0 || col >= GRID_SIZE) {
-            return -1; // Position invalide
-        }
-        return grid[row][col];
-    }
-    
-    /**
-     * Vérifie si la grille est complètement remplie et valide
-     */
-    public boolean isSolved() {
-        // Vérifier qu'il n'y a pas de cases vides
-        for (int row = 0; row < GRID_SIZE; row++) {
-            for (int col = 0; col < GRID_SIZE; col++) {
-                if (grid[row][col] == 0) {
-                    return false;
-                }
-            }
-        }
-        
-        // Vérifier la validité de chaque case remplie
-        for (int row = 0; row < GRID_SIZE; row++) {
-            for (int col = 0; col < GRID_SIZE; col++) {
-                int number = grid[row][col];
-                grid[row][col] = 0; // Temporairement vider pour tester
-                
-                if (!isValidPlacement(row, col, number)) {
-                    grid[row][col] = number; // Remettre la valeur
-                    return false;
-                }
-                
-                grid[row][col] = number; // Remettre la valeur
-            }
-        }
-        
-        return true;
-    }
-    
-    /**
-     * Affiche la grille dans la console avec un formatage lisible
-     */
-    public void printGrid() {
-        System.out.println("┌───────┬───────┬───────┐");
-        
-        for (int row = 0; row < GRID_SIZE; row++) {
-            if (row == 3 || row == 6) {
-                System.out.println("├───────┼───────┼───────┤");
-            }
-            
-            System.out.print("│ ");
-            for (int col = 0; col < GRID_SIZE; col++) {
-                if (col == 3 || col == 6) {
-                    System.out.print("│ ");
-                }
-                
-                if (grid[row][col] == 0) {
-                    System.out.print(". ");
-                } else {
-                    System.out.print(grid[row][col] + " ");
-                }
-            }
-            System.out.println("│");
-        }
-        
-        System.out.println("└───────┴───────┴───────┘");
+        return copy;
     }
     
     /**
      * Copie la grille actuelle
      */
     public int[][] copyGrid() {
-        int[][] copy = new int[GRID_SIZE][GRID_SIZE];
-        for (int row = 0; row < GRID_SIZE; row++) {
-            System.arraycopy(grid[row], 0, copy[row], 0, GRID_SIZE);
-        }
-        return copy;
+        return getGrille();
     }
     
     /**
      * Charge une grille depuis un tableau 2D
      */
     public void loadGrid(int[][] newGrid) {
-        if (newGrid.length == GRID_SIZE && newGrid[0].length == GRID_SIZE) {
-            for (int row = 0; row < GRID_SIZE; row++) {
-                System.arraycopy(newGrid[row], 0, grid[row], 0, GRID_SIZE);
+        for (int i = 0; i < 9; i++) {
+            System.arraycopy(newGrid[i], 0, grille[i], 0, 9);
+        }
+    }
+    
+    /**
+     * Place un nombre dans la grille
+     */
+    public void placerNombre(int ligne, int colonne, int nombre) {
+        if (ligne >= 0 && ligne < 9 && colonne >= 0 && colonne < 9) {
+            grille[ligne][colonne] = nombre;
+        }
+    }
+    
+    /**
+     * Retire un nombre de la grille
+     */
+    public void retirerNombre(int ligne, int colonne) {
+        if (ligne >= 0 && ligne < 9 && colonne >= 0 && colonne < 9) {
+            grille[ligne][colonne] = 0;
+        }
+    }
+    
+    /**
+     * Définit un nombre dans la grille (avec validation)
+     */
+    public boolean setNumber(int row, int col, int number) {
+        if (row < 0 || row >= 9 || col < 0 || col >= 9) {
+            return false;
+        }
+        
+        if (number == 0) {
+            grille[row][col] = 0;
+            return true;
+        }
+        
+        if (number < 1 || number > 9) {
+            return false;
+        }
+        
+        if (estValide(row, col, number)) {
+            grille[row][col] = number;
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Vérifie si un nombre peut être placé à une position donnée
+     */
+    public boolean estValide(int ligne, int colonne, int nombre) {
+        if (nombre < 1 || nombre > 9) {
+            return false;
+        }
+        
+        // Vérifier la ligne
+        for (int col = 0; col < 9; col++) {
+            if (col != colonne && grille[ligne][col] == nombre) {
+                return false;
+            }
+        }
+        
+        // Vérifier la colonne
+        for (int row = 0; row < 9; row++) {
+            if (row != ligne && grille[row][colonne] == nombre) {
+                return false;
+            }
+        }
+        
+        // Vérifier la région 3x3
+        int startRow = (ligne / 3) * 3;
+        int startCol = (colonne / 3) * 3;
+        
+        for (int row = startRow; row < startRow + 3; row++) {
+            for (int col = startCol; col < startCol + 3; col++) {
+                if ((row != ligne || col != colonne) && grille[row][col] == nombre) {
+                    return false;
+                }
+            }
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Vérifie si la grille est complète
+     */
+    public boolean estComplete() {
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (grille[i][j] == 0) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    
+    /**
+     * Vérifie si la grille actuelle est valide
+     */
+    public boolean estValide() {
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (grille[i][j] != 0) {
+                    int temp = grille[i][j];
+                    grille[i][j] = 0; // Temporairement vide pour tester
+                    if (!estValide(i, j, temp)) {
+                        grille[i][j] = temp; // Restaurer
+                        return false;
+                    }
+                    grille[i][j] = temp; // Restaurer
+                }
+            }
+        }
+        return true;
+    }
+    
+    /**
+     * Vérifie si le Sudoku est résolu
+     */
+    public boolean isSolved() {
+        return estComplete() && estValide();
+    }
+    
+    /**
+     * Génère une grille complète valide
+     */
+    public void genererGrille() {
+        clearGrid();
+        generateCompleteGrid();
+        saveOriginalGrid();
+    }
+    
+    /**
+     * Crée un puzzle en retirant des nombres
+     */
+    public void createPuzzle(int cellsToRemove) {
+        genererGrille();
+        removeCells(cellsToRemove);
+        saveOriginalGrid();
+    }
+    
+    /**
+     * Sauvegarde la grille originale
+     */
+    private void saveOriginalGrid() {
+        for (int i = 0; i < 9; i++) {
+            System.arraycopy(grille[i], 0, originalGrid[i], 0, 9);
+        }
+    }
+    
+    /**
+     * Génère une grille complète valide
+     */
+    private void generateCompleteGrid() {
+        // Remplir la diagonale (3 régions 3x3 indépendantes)
+        fillDiagonal();
+        
+        // Remplir le reste de la grille
+        solveSudoku();
+    }
+    
+    /**
+     * Remplit les 3 régions diagonales
+     */
+    private void fillDiagonal() {
+        for (int i = 0; i < 9; i += 3) {
+            fillBox(i, i);
+        }
+    }
+    
+    /**
+     * Remplit une région 3x3
+     */
+    private void fillBox(int startRow, int startCol) {
+        int[] numbers = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+        shuffleArray(numbers);
+        
+        int index = 0;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                grille[startRow + i][startCol + j] = numbers[index++];
             }
         }
     }
-}
-
     
+    /**
+     * Mélange un tableau
+     */
+    private void shuffleArray(int[] array) {
+        for (int i = array.length - 1; i > 0; i--) {
+            int j = random.nextInt(i + 1);
+            int temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+        }
+    }
+    
+    /**
+     * Résout le Sudoku avec backtracking
+     */
+    public boolean solveSudoku() {
+        return resoudre();
+    }
+    
+    /**
+     * Résout le Sudoku (alias pour compatibilité)
+     */
+    public boolean resoudre() {
+        for (int row = 0; row < 9; row++) {
+            for (int col = 0; col < 9; col++) {
+                if (grille[row][col] == 0) {
+                    for (int num = 1; num <= 9; num++) {
+                        if (estValide(row, col, num)) {
+                            grille[row][col] = num;
+                            
+                            if (resoudre()) {
+                                return true;
+                            }
+                            
+                            grille[row][col] = 0; // Backtrack
+                        }
+                    }
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    
+    /**
+     * Retire des cellules pour créer un puzzle
+     */
+    private void removeCells(int count) {
+        int removed = 0;
+        while (removed < count) {
+            int row = random.nextInt(9);
+            int col = random.nextInt(9);
+            
+            if (grille[row][col] != 0) {
+                int temp = grille[row][col];
+                grille[row][col] = 0;
+                
+                // Vérifier que le puzzle a toujours une solution unique
+                if (hasUniqueSolution()) {
+                    removed++;
+                } else {
+                    grille[row][col] = temp; // Restaurer si pas de solution unique
+                }
+            }
+        }
+    }
+    
+    /**
+     * Vérifie si le puzzle a une solution unique
+     */
+    private boolean hasUniqueSolution() {
+        int[][] backup = copyGrid();
+        int solutions = countSolutions(0);
+        loadGrid(backup);
+        return solutions == 1;
+    }
+    
+    /**
+     * Compte le nombre de solutions possibles
+     */
+    private int countSolutions(int solutions) {
+        if (solutions > 1) return solutions; // Optimisation
+        
+        for (int row = 0; row < 9; row++) {
+            for (int col = 0; col < 9; col++) {
+                if (grille[row][col] == 0) {
+                    for (int num = 1; num <= 9; num++) {
+                        if (estValide(row, col, num)) {
+                            grille[row][col] = num;
+                            solutions = countSolutions(solutions);
+                            grille[row][col] = 0;
+                            
+                            if (solutions > 1) return solutions;
+                        }
+                    }
+                    return solutions;
+                }
+            }
+        }
+        return solutions + 1;
+    }
+    
+    /**
+     * Affiche la grille dans la console
+     */
+    public void printGrid() {
+        System.out.println("╔═══════╤═══════╤═══════╗");
+        
+        for (int i = 0; i < 9; i++) {
+            if (i == 3 || i == 6) {
+                System.out.println("╟───────┼───────┼───────╢");
+            }
+            
+            System.out.print("║ ");
+            for (int j = 0; j < 9; j++) {
+                if (j == 3 || j == 6) {
+                    System.out.print("│ ");
+                }
+                
+                if (grille[i][j] == 0) {
+                    System.out.print("· ");
+                } else {
+                    System.out.print(grille[i][j] + " ");
+                }
+            }
+            System.out.println("║");
+        }
+        
+        System.out.println("╚═══════╧═══════╧═══════╝");
+    }
+}
