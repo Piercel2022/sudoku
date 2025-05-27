@@ -1,0 +1,23 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Launch SudokuMain",
+            "request": "launch",
+            "mainClass": "SudokuMain",
+            "projectName": "SudokuGame",
+            "console": "integratedTerminal",
+            "args": []
+        },
+        {
+            "type": "java",
+            "name": "Debug SudokuMain",
+            "request": "launch",
+            "mainClass": "SudokuMain",
+            "projectName": "SudokuGame",
+            "console": "integratedTerminal",
+            "stopOnEntry": false
+        }
+    ]
+}
