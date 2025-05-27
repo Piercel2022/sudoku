@@ -74,6 +74,7 @@ REQUIRED SECTIONS:
 - **[🧠 Intelligent Solver]**
 - **[🎲 Dynamic Puzzle Generation]**
 - **[✅ Real-time Validation]**
+- **[🎮 Interactive Console Interface]**
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
