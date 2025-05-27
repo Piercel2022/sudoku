@@ -73,7 +73,7 @@ REQUIRED SECTIONS:
 
 - **[🧠 Intelligent Solver]**
 - **[🎲 Dynamic Puzzle Generation]**
-- **[key_feature_3]**
+- **[✅ Real-time Validation]**
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
