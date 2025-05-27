@@ -1,4 +1,10 @@
-// ==================== ÉTAPE 6: Interface utilisateur console ====================
+// ============================================================================
+// SudokuConsoleGame.java - Console interface (src/main/java/com/sudoku/ui/SudokuConsoleGame.java)
+// ============================================================================
+package com.sudoku.ui;
+
+import com.sudoku.core.Sudoku;
+import java.util.Scanner;
 
 public class SudokuConsoleGame {
     private Sudoku sudoku;
@@ -32,6 +38,7 @@ public class SudokuConsoleGame {
                     break;
                 case 4:
                     System.out.println("Merci d'avoir joué!");
+                    scanner.close();
                     return;
                 default:
                     System.out.println("Choix invalide!");
@@ -82,6 +89,8 @@ public class SudokuConsoleGame {
     }
 
     private void playInteractiveGame() {
+        scanner.nextLine(); // Clear buffer
+        
         while (true) {
             System.out.println("\n=== GRILLE ACTUELLE ===");
             sudoku.printGrid();
@@ -148,6 +157,7 @@ public class SudokuConsoleGame {
         System.out.println("Exemple: 1 0 3 0 5 0 7 0 9");
         
         sudoku.clearGrid();
+        scanner.nextLine(); // Clear buffer
         
         for (int row = 0; row < 9; row++) {
             System.out.printf("Ligne %d: ", row + 1);
@@ -174,4 +184,3 @@ public class SudokuConsoleGame {
         sudoku.printGrid();
     }
 }
-
