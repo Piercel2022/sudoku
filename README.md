@@ -117,7 +117,7 @@ Clone this repository to your desired folder:
 To run the project, execute the following command:
 
 ```sh
-  
+  java -cp target/sudoku-game-1.0.0-executable.jar SudokuMain
 ```
 
 ### Deployment
@@ -126,7 +126,7 @@ You can deploy this project using:
 
 
 ```sh
-Netlify
+
 ```
  
 
