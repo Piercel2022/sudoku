@@ -1,10 +1,12 @@
 // ============================================================================
-// 1. SudokuGUI.java - Fenêtre principale
+// SudokuGUI.java - Main window (should be in src/main/java/com/sudoku/gui/)
 // ============================================================================
-package main.java.com.sudoku.gui;
+package com.sudoku.gui;
 
-import sudoku.core.Sudoku;
+import com.sudoku.core.Sudoku;
+
 import javax.swing.*;
+import javax.swing.UIManager.LookAndFeelInfo;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -194,14 +196,9 @@ public class SudokuGUI extends JFrame {
     }
     
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            try {
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeel());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            
-            new SudokuGUI().setVisible(true);
-        });
+        // Simple version without Look and Feel setting
+    SwingUtilities.invokeLater(() -> {
+    new SudokuGUI().setVisible(true);
+});
     }
 }
