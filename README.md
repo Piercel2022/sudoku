@@ -71,7 +71,7 @@ REQUIRED SECTIONS:
 ### Key Features <a name="key-features"></a>
 
 
-- **[key_feature_1]**
+- **[🧠 Intelligent Solver]**
 - **[key_feature_2]**
 - **[key_feature_3]**
 
