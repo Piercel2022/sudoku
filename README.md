@@ -152,7 +152,7 @@ You can deploy this project using:
 
 
 
-- [ ] **[new_feature_1]**
+- [ ] **[📝 Custom Puzzle Import]**
 - [ ] **[new_feature_2]**
 - [ ] **[new_feature_3]**
 
