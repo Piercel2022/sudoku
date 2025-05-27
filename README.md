@@ -72,7 +72,7 @@ REQUIRED SECTIONS:
 
 
 - **[🧠 Intelligent Solver]**
-- **[key_feature_2]**
+- **[🎲 Dynamic Puzzle Generation]**
 - **[key_feature_3]**
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
