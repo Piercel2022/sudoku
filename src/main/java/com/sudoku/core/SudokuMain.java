@@ -1,5 +1,10 @@
-// ==================== ÉTAPE 7: Classe principale avec main ====================
-package com.sudoku;
+// ============================================================================
+// SudokuMain.java - Main class (src/main/java/com/sudoku/core/SudokuMain.java)
+// ============================================================================
+package com.sudoku.core;
+
+import com.sudoku.ui.SudokuConsoleGame;
+
 public class SudokuMain {
     public static void main(String[] args) {
         // Exemple d'utilisation directe de la classe Sudoku
