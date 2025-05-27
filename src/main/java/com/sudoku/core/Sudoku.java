@@ -4,6 +4,7 @@
 import java.util.*;
 
 package com.sudoku;
+
 public class Sudoku {
     // Constante pour la taille de la grille (9x9)
     private static final int GRID_SIZE = 9;
