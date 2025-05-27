@@ -98,6 +98,12 @@ To get a local copy up and running, follow these steps.
 ### Prerequisites
 
 ```sh
+mvn -v
+Apache Maven 3.9.9 (8e8579a9e76f7d015ee5ec7bfcdc97d260186937)
+Maven home: C:\ProgramData\chocolatey\lib\maven\apache-maven-3.9.9
+Java version: 24.0.1, vendor: Oracle Corporation, runtime: C:\Program Files\Java\jdk-24
+Default locale: fr_FR, platform encoding: UTF-8
+OS name: "windows 10", version: "10.0", arch: "amd64", family: "windows"
  
 ```
  
@@ -109,7 +115,7 @@ Clone this repository to your desired folder:
 ```sh
  
   git clone git@github.com:Piercel2022/sudoku.git
-   cd sudoku
+  cd sudoku
 ```
 
 
