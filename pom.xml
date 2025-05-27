@@ -11,55 +11,32 @@
     <packaging>jar</packaging>
     
     <name>Sudoku Game</name>
-    <description>Un jeu de Sudoku complet en Java</description>
+    <description>Jeu Sudoku avec interface Swing</description>
     
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <junit.version>5.10.1</junit.version>
-        <maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
-        <maven.shade.plugin.version>3.5.1</maven.shade.plugin.version>
-        <exec.maven.plugin.version>3.1.0</exec.maven.plugin.version>
-        <maven.surefire.plugin.version>3.2.2</maven.surefire.plugin.version>
     </properties>
-    
-    <dependencies>
-        <!-- JUnit 5 pour les tests -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
     
     <build>
         <plugins>
-            <!-- Plugin de compilation -->
+            <!-- Compilation -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven.compiler.plugin.version}</version>
+                <version>3.11.0</version>
                 <configuration>
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
-                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <source>11</source>
+                    <target>11</target>
                 </configuration>
             </plugin>
             
-            <!-- Plugin pour les tests -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven.surefire.plugin.version}</version>
-            </plugin>
-            
-            <!-- Plugin pour créer un JAR exécutable -->
+            <!-- JAR Exécutable avec toutes les dépendances -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>${maven.shade.plugin.version}</version>
+                <version>3.4.1</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -69,22 +46,31 @@
                         <configuration>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.sudoku.SudokuMain</mainClass>
+                                    <mainClass>sudoku.gui.SudokuLauncher</mainClass>
                                 </transformer>
                             </transformers>
-                            <finalName>${project.artifactId}-${project.version}-executable</finalName>
+                            <finalName>sudoku-game-${version}</finalName>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
             
-            <!-- Plugin pour l'exécution directe -->
+            <!-- Installateur natif (optionnel) -->
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>${exec.maven.plugin.version}</version>
+                <groupId>org.panteleyev</groupId>
+                <artifactId>jpackage-maven-plugin</artifactId>
+                <version>1.6.0</version>
                 <configuration>
-                    <mainClass>com.sudoku.SudokuMain</mainClass>
+                    <name>SudokuGame</name>
+                    <appVersion>${project.version}</appVersion>
+                    <vendor>VotreNom</vendor>
+                    <destination>target/installer</destination>
+                    <module>sudoku.game/sudoku.gui.SudokuLauncher</module>
+                    <runtimeImage>target/runtime</runtimeImage>
+                    <options>
+                        <option>--win-menu</option>
+                        <option>--win-shortcut</option>
+                    </options>
                 </configuration>
             </plugin>
         </plugins>
