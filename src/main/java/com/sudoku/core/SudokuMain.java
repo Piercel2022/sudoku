@@ -1,5 +1,5 @@
 // ==================== ÉTAPE 7: Classe principale avec main ====================
-
+package com.sudoku;
 public class SudokuMain {
     public static void main(String[] args) {
         // Exemple d'utilisation directe de la classe Sudoku
