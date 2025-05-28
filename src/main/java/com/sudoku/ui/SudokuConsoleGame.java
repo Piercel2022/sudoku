@@ -7,8 +7,8 @@ import com.sudoku.core.Sudoku;
 import java.util.Scanner;
 
 public class SudokuConsoleGame {
-    private Sudoku sudoku;
-    private Scanner scanner;
+    private  Sudoku sudoku;
+    private  Scanner scanner;
     
     public SudokuConsoleGame() {
         this.sudoku = new Sudoku();
