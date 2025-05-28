@@ -1,9 +1,5 @@
 // ============================================================================
-// 2. SudokuPanel.java - Panel de la grille de jeu
-// ============================================================================
-
-// ============================================================================
-// 5. SudokuPanel.java - Game display panel (should be in src/main/java/com/sudoku/gui/)
+// SudokuPanel.java - Game display panel (should be in src/main/java/com/sudoku/gui/)
 // ============================================================================
 package com.sudoku.gui;
 
