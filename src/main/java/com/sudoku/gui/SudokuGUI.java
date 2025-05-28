@@ -197,8 +197,8 @@ public class SudokuGUI extends JFrame {
     
     public static void main(String[] args) {
         // Simple version without Look and Feel setting
-    SwingUtilities.invokeLater(() -> {
-    new SudokuGUI().setVisible(true);
-});
+        SwingUtilities.invokeLater(() -> {
+            new SudokuGUI().setVisible(true);
+        });
     }
 }
