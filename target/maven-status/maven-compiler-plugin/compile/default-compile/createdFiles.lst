@@ -1,9 +1,6 @@
 com\sudoku\gui\SudokuLauncher.class
 com\sudoku\gui\SudokuPanel.class
-com\sudoku\gui\SudokuPanel$CellActionListener.class
-com\sudoku\core\Sudoku.class
-com\sudoku\gui\SudokuPanel$NumberDocument.class
-com\sudoku\ui\SudokuConsoleGame.class
-com\sudoku\gui\SudokuPanel$1.class
 com\sudoku\core\SudokuMain.class
+com\sudoku\core\Sudoku.class
+com\sudoku\ui\SudokuConsoleGame.class
 com\sudoku\gui\SudokuGUI.class
