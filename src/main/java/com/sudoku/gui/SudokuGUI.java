@@ -1,204 +1,149 @@
-// ============================================================================
-// SudokuGUI.java - Main window (should be in src/main/java/com/sudoku/gui/)
-// ============================================================================
+// SudokuGUI.java - Interface graphique principale
 package com.sudoku.gui;
 
 import com.sudoku.core.Sudoku;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 
-import javax.swing.*;
-import javax.swing.UIManager.LookAndFeelInfo;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-public class SudokuGUI extends JFrame {
-    private Sudoku sudokuEngine;
-    private SudokuPanel gamePanel;
-    private JLabel statusLabel;
-    private JPanel controlPanel;
+public class SudokuGUI {
+    private Sudoku sudoku;
+    private SudokuPanel sudokuPanel;
+    private BorderPane root;
+    private Label statusLabel;
     
     public SudokuGUI() {
-        this.sudokuEngine = new Sudoku();
+        this.statusLabel = new Label("Ready");
+        sudoku = new Sudoku();
         initializeGUI();
-        newGame();
     }
     
     private void initializeGUI() {
-        setTitle("Sudoku Game - Java Swing");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new BorderLayout());
+        root = new BorderPane();
+        root.setPadding(new Insets(10));
         
-        // Panel principal du jeu
-        gamePanel = new SudokuPanel(sudokuEngine);
-        add(gamePanel, BorderLayout.CENTER);
+        // Panel supérieur avec titre et boutons
+        VBox topPanel = createTopPanel();
+        root.setTop(topPanel);
         
-        // Panel de contrôle
-        createControlPanel();
-        add(controlPanel, BorderLayout.SOUTH);
+        // Panel central avec la grille Sudoku
+        sudokuPanel = new SudokuPanel(sudoku, this);
+        root.setCenter(sudokuPanel.getGridPane());
         
-        // Barre de menu
-        createMenuBar();
-        
-        // Status bar
-        statusLabel = new JLabel("Nouveau jeu généré - Bonne chance !");
-        statusLabel.setBorder(BorderFactory.createLoweredBevelBorder());
-        add(statusLabel, BorderLayout.NORTH);
-        
-        // Configuration de la fenêtre
-        pack();
-        setLocationRelativeTo(null);
-        setResizable(false);
+        // Panel inférieur avec status
+        HBox bottomPanel = createBottomPanel();
+        root.setBottom(bottomPanel);
     }
     
-    private void createControlPanel() {
-        controlPanel = new JPanel(new FlowLayout());
+    private VBox createTopPanel() {
+        VBox topPanel = new VBox(10);
+        topPanel.setAlignment(Pos.CENTER);
         
-        JButton newGameBtn = new JButton("Nouveau Jeu");
-        JButton solveBtn = new JButton("Résoudre");
-        JButton hintBtn = new JButton("Indice");
-        JButton checkBtn = new JButton("Vérifier");
-        JButton resetBtn = new JButton("Reset");
+        // Titre
+        Label titleLabel = new Label("SUDOKU");
+        titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 24));
+        titleLabel.setTextFill(Color.DARKBLUE);
+        
+        // Boutons
+        HBox buttonPanel = new HBox(10);
+        buttonPanel.setAlignment(Pos.CENTER);
+        
+        Button newGameBtn = new Button("Nouvelle Partie");
+        Button solveBtn = new Button("Résoudre");
+        Button resetBtn = new Button("Réinitialiser");
+        Button hintBtn = new Button("Indice");
+        
+        // Style des boutons
+        String buttonStyle = "-fx-font-size: 12px; -fx-padding: 8 16 8 16;";
+        newGameBtn.setStyle(buttonStyle + "-fx-background-color: #4CAF50; -fx-text-fill: white;");
+        solveBtn.setStyle(buttonStyle + "-fx-background-color: #2196F3; -fx-text-fill: white;");
+        resetBtn.setStyle(buttonStyle + "-fx-background-color: #FF9800; -fx-text-fill: white;");
+        hintBtn.setStyle(buttonStyle + "-fx-background-color: #9C27B0; -fx-text-fill: white;");
         
         // Actions des boutons
-        newGameBtn.addActionListener(e -> newGame());
-        solveBtn.addActionListener(e -> solvePuzzle());
-        hintBtn.addActionListener(e -> giveHint());
-        checkBtn.addActionListener(e -> checkSolution());
-        resetBtn.addActionListener(e -> resetGame());
+        newGameBtn.setOnAction(e -> newGame());
+        solveBtn.setOnAction(e -> solvePuzzle());
+        resetBtn.setOnAction(e -> resetGame());
+        hintBtn.setOnAction(e -> showHint());
         
-        controlPanel.add(newGameBtn);
-        controlPanel.add(solveBtn);
-        controlPanel.add(hintBtn);
-        controlPanel.add(checkBtn);
-        controlPanel.add(resetBtn);
+        buttonPanel.getChildren().addAll(newGameBtn, solveBtn, resetBtn, hintBtn);
+        topPanel.getChildren().addAll(titleLabel, buttonPanel);
+        
+        return topPanel;
     }
     
-    private void createMenuBar() {
-        JMenuBar menuBar = new JMenuBar();
+    private HBox createBottomPanel() {
+        HBox bottomPanel = new HBox();
+        bottomPanel.setAlignment(Pos.CENTER);
+        bottomPanel.setPadding(new Insets(10, 0, 0, 0));
         
-        // Menu Jeu
-        JMenu gameMenu = new JMenu("Jeu");
-        JMenuItem newGameItem = new JMenuItem("Nouveau Jeu");
-        JMenuItem exitItem = new JMenuItem("Quitter");
+        statusLabel = new Label("Bonne chance !");
+        statusLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
+        statusLabel.setTextFill(Color.DARKGREEN);
         
-        newGameItem.addActionListener(e -> newGame());
-        exitItem.addActionListener(e -> System.exit(0));
-        
-        gameMenu.add(newGameItem);
-        gameMenu.addSeparator();
-        gameMenu.add(exitItem);
-        
-        // Menu Difficulté
-        JMenu difficultyMenu = new JMenu("Difficulté");
-        JMenuItem easyItem = new JMenuItem("Facile");
-        JMenuItem mediumItem = new JMenuItem("Moyen");
-        JMenuItem hardItem = new JMenuItem("Difficile");
-        
-        easyItem.addActionListener(e -> newGameWithDifficulty("facile"));
-        mediumItem.addActionListener(e -> newGameWithDifficulty("moyen"));
-        hardItem.addActionListener(e -> newGameWithDifficulty("difficile"));
-        
-        difficultyMenu.add(easyItem);
-        difficultyMenu.add(mediumItem);
-        difficultyMenu.add(hardItem);
-        
-        // Menu Aide
-        JMenu helpMenu = new JMenu("Aide");
-        JMenuItem aboutItem = new JMenuItem("À propos");
-        aboutItem.addActionListener(e -> showAbout());
-        helpMenu.add(aboutItem);
-        
-        menuBar.add(gameMenu);
-        menuBar.add(difficultyMenu);
-        menuBar.add(helpMenu);
-        
-        setJMenuBar(menuBar);
+        bottomPanel.getChildren().add(statusLabel);
+        return bottomPanel;
     }
     
     private void newGame() {
-        sudokuEngine.genererGrille();
-        gamePanel.updateDisplay();
-        statusLabel.setText("Nouveau jeu généré - Bonne chance !");
-    }
-    
-    private void newGameWithDifficulty(String difficulty) {
-        // Adapter selon votre implémentation de difficulté
-        newGame();
-        statusLabel.setText("Nouveau jeu (" + difficulty + ") généré !");
+        sudoku.reset();
+        sudokuPanel.updateGrid();
+        updateStatus("Nouvelle partie commencée !");
     }
     
     private void solvePuzzle() {
-        if (sudokuEngine.resoudre()) {
-            gamePanel.updateDisplay();
-            statusLabel.setText("Puzzle résolu automatiquement !");
-            JOptionPane.showMessageDialog(this, "Puzzle résolu !", "Résolution", JOptionPane.INFORMATION_MESSAGE);
+        int[][] grid = sudoku.getGrid();
+        if (sudoku.solveSudoku(grid)) {
+            for (int i = 0; i < 9; i++) {
+                for (int j = 0; j < 9; j++) {
+                    sudoku.setCell(i, j, grid[i][j]);
+                }
+            }
+            sudokuPanel.updateGrid();
+            updateStatus("Puzzle résolu !");
         } else {
-            statusLabel.setText("Impossible de résoudre ce puzzle.");
-            JOptionPane.showMessageDialog(this, "Impossible de résoudre ce puzzle.", "Erreur", JOptionPane.ERROR_MESSAGE);
+            updateStatus("Impossible de résoudre ce puzzle.");
         }
     }
     
-    private void giveHint() {
-        // Implémentation d'indice - trouve une cellule vide et donne la solution
-        int[][] grille = sudokuEngine.getGrille();
-        for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
-                if (grille[i][j] == 0) {
-                    // Trouve la valeur correcte pour cette cellule
+    private void resetGame() {
+        // Réinitialiser avec la même grille initiale
+        sudokuPanel.resetToInitial();
+        updateStatus("Grille réinitialisée !");
+    }
+    
+    private void showHint() {
+        // Trouver une cellule vide et donner un indice
+        for (int row = 0; row < 9; row++) {
+            for (int col = 0; col < 9; col++) {
+                if (sudoku.getCell(row, col) == 0) {
                     for (int num = 1; num <= 9; num++) {
-                        if (sudokuEngine.estValide(i, j, num)) {
-                            sudokuEngine.placerNombre(i, j, num);
-                            gamePanel.updateDisplay();
-                            statusLabel.setText("Indice donné en (" + (i+1) + "," + (j+1) + ") = " + num);
+                        if (sudoku.isValidMove(row, col, num)) {
+                            updateStatus("Indice: Essayez " + num + " à la ligne " + (row + 1) + ", colonne " + (col + 1));
                             return;
                         }
                     }
                 }
             }
         }
-        statusLabel.setText("Aucun indice disponible.");
+        updateStatus("Aucun indice disponible.");
     }
     
-    private void checkSolution() {
-        if (sudokuEngine.estComplete()) {
-            if (sudokuEngine.estValide()) {
-                statusLabel.setText("Félicitations ! Puzzle résolu correctement !");
-                JOptionPane.showMessageDialog(this, "Félicitations !\nVous avez résolu le puzzle !", 
-                    "Victoire !", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                statusLabel.setText("Il y a des erreurs dans votre solution.");
-                JOptionPane.showMessageDialog(this, "Il y a des erreurs dans votre solution.", 
-                    "Erreurs détectées", JOptionPane.WARNING_MESSAGE);
-            }
-        } else {
-            statusLabel.setText("Puzzle non terminé.");
+    public void updateStatus(String message) {
+        statusLabel.setText(message);
+        
+        if (sudoku.isSolved()) {
+            statusLabel.setText("🎉 Félicitations ! Vous avez résolu le Sudoku ! 🎉");
+            statusLabel.setTextFill(Color.GREEN);
         }
     }
     
-    private void resetGame() {
-        // Reset à l'état initial du puzzle
-        sudokuEngine.genererGrille();
-        gamePanel.updateDisplay();
-        statusLabel.setText("Jeu remis à zéro.");
-    }
-    
-    private void showAbout() {
-        JOptionPane.showMessageDialog(this, 
-            "Sudoku Game v1.0\n" +
-            "Développé en Java Swing\n" +
-            "Architecture modulaire\n\n" +
-            "Règles du Sudoku :\n" +
-            "- Remplir la grille 9x9\n" +
-            "- Chaque ligne, colonne et région 3x3\n" +
-            "  doit contenir les chiffres 1-9\n" +
-            "- Pas de répétition !",
-            "À propos", JOptionPane.INFORMATION_MESSAGE);
-    }
-    
-    public static void main(String[] args) {
-        // Simple version without Look and Feel setting
-        SwingUtilities.invokeLater(() -> {
-            new SudokuGUI().setVisible(true);
-        });
+    public Parent getRoot() {
+        return root;
     }
 }
