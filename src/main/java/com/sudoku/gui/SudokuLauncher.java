@@ -1,39 +1,28 @@
-// ============================================================================
-// SudokuLauncher.java - GUI entry point (src/main/java/com/sudoku/gui/SudokuLauncher.java)
-// ============================================================================
+// SudokuLauncher.java - Lanceur JavaFX
 package com.sudoku.gui;
 
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
-import javax.swing.*;
-
-public class SudokuLauncher {
+public class SudokuLauncher extends Application {
+    
     public static void main(String[] args) {
-        // Définir le Look and Feel du système
-        try {
-            // Utiliser getSystemLookAndFeelClassName() qui retourne une String
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException | InstantiationException | 
-                 IllegalAccessException | UnsupportedLookAndFeelException e) {
-            System.err.println("Impossible de définir le Look and Feel système: " + e.getMessage());
-            // Fallback vers le Look and Feel cross-platform
-            try {
-                UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-            } catch (Exception ex) {
-                System.err.println("Utilisation du Look and Feel par défaut");
-            }
-        }
+        launch(args);
+    }
+    
+    @Override
+    public void start(Stage primaryStage) {
+        primaryStage.setTitle("Sudoku Game - JavaFX");
+        primaryStage.setResizable(false);
         
-        // Lancer l'interface graphique dans l'EDT
-        SwingUtilities.invokeLater(() -> {
-            try {
-                SudokuGUI gui = new SudokuGUI();
-                gui.setVisible(true);
-            } catch (Exception e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(null,
-                    "Erreur lors du lancement de l'application: " + e.getMessage(),
-                    "Erreur", JOptionPane.ERROR_MESSAGE);
-            }
-        });
+        SudokuGUI sudokuGUI = new SudokuGUI();
+        Scene scene = new Scene(sudokuGUI.getRoot(), 600, 650);
+        
+        // Ajout du CSS pour le style
+        //scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
+        
+        primaryStage.setScene(scene);
+        primaryStage.show();
     }
 }
